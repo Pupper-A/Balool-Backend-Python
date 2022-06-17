@@ -1,4 +1,11 @@
 from django.db import models
+import os
+import uuid
+
+def getcurrentusername(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('media/images/' + instance.username, filename)
 
 class User(models.Model):
     first_name = models.CharField(max_length=80)
@@ -6,7 +13,7 @@ class User(models.Model):
     username = models.CharField(max_length=80)
     email = models.CharField(max_length=80)
     password = models.CharField(max_length=100)
-    # avatar = models.ImageField(blank=True)
+    avatar = models.ImageField(upload_to=getcurrentusername, null=True)
     created_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
@@ -32,7 +39,7 @@ class Follow(models.Model):
 
 class Toggle(models.Model):
     # user_id = models.ForeignKey("User", related_name="toggle")
-    is_toggled = models.NullBooleanField()
+    is_toggled = models.BooleanField(null=True)
     toggled_time = models.DateTimeField(auto_now_add=True, blank=True)
 
 class Time(models.Model):
