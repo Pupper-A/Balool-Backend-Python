@@ -10,11 +10,14 @@ from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserSerializer, FollowSerializer, ToggleSerializer, TimeSerializer
 from .models import User, Follow, Toggle, Time
 
+class Index(APIView):
+    def get(self, request):
+        return render(request, "index.html", { })
+
 class SignUp(APIView):
     def get(self, request):
         username = "roozbeh"
         return Response(username)
-        
     @method_decorator(csrf_exempt)
     def post(self, request):
         print(request.data)
@@ -23,7 +26,3 @@ class SignUp(APIView):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-def front(request):
-    context = { }
-    return render(request, "index.html", context)

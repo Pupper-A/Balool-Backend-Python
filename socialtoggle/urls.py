@@ -15,11 +15,9 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from core.views import front
-from core.views import SignUp
+from django.urls import path, include
+from core.views import Index, SignUp
 
 urlpatterns = [
-    path("", front, name="front"),
-    path('signup/', SignUp.as_view())
+    path('api/', include('core.urls'))
 ]
