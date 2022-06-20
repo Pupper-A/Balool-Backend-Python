@@ -1,32 +1,17 @@
+from typing_extensions import Required
 from django.db import models
 import os
 import uuid
+from django.contrib.auth.models import AbstractUser
 
 def getcurrentusername(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
     return os.path.join('media/images/' + instance.username, filename)
 
-class User(models.Model):
-    first_name = models.CharField(max_length=80)
-    last_name = models.CharField(max_length=80)
-    username = models.CharField(max_length=80)
-    email = models.CharField(max_length=80)
-    password = models.CharField(max_length=100)
+class User(AbstractUser):
     avatar = models.ImageField(upload_to=getcurrentusername, null=True)
-    created_date = models.DateTimeField(auto_now_add=True, blank=True)
-
-    def __str__(self):
-        return self.username
-    
-    def as_dict(self):
-        return {
-            "firstname": self.first_name,
-            "lastname" : self.last_name,
-            "username" : self.username,
-            "email" : self.email,
-            "created-date" : self.created_date 
-        }
+    email = models.CharField(max_length=150, blank=False, unique=True)
 
 class Follow(models.Model):
     # user_id = models.ForeignKey("User", related_name="following")
