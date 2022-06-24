@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractUser
 def getcurrentusername(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('media/images/' + instance.username, filename)
+    return os.path.join('images/' + instance.username, filename)
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to=getcurrentusername, null=True)

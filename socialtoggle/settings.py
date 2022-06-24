@@ -182,3 +182,6 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'core.User'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'socialtoggle/media')
+MEDIA_URL = '/media/'
