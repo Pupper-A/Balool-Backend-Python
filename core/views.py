@@ -78,6 +78,12 @@ class SignUp(APIView):
             return Response(msg, status=status.HTTP_400_BAD_REQUEST)
 
 class ToggleView(APIView):
+    def get(self, request):
+        user = request.user
+        toggle = Toggle.objects.filter(user_id_id=user.id).latest("toggled_time")
+        serializer = ToggleSerializer(toggle, many=False)
+        return Response(serializer.data)
+
     @method_decorator(csrf_exempt)
     def post(self, request):
         data = request.data
