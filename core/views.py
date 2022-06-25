@@ -44,9 +44,6 @@ class GetUserProfile(APIView):
 
 
 class SignUp(APIView):
-    def get(self, request):
-        username = "roozbeh"
-        return Response(username)
     @method_decorator(csrf_exempt)
     def post(self, request):
         data = request.data
@@ -78,4 +75,23 @@ class SignUp(APIView):
                 if user:
                     msg = {"detail": "There is a user with this email"}
 
+            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+
+class ToggleView(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        data = request.data
+
+        try:
+            toggle = Toggle.objects.create(
+                is_toggled = data["is_toggled"],
+                user_id_id = data["user_id"],
+            )
+
+            serializer = ToggleSerializer(toggle, many=False)
+            
+            return Response(serializer.data)
+
+        except:
+            msg = "something goes wrong!"
             return Response(msg, status=status.HTTP_400_BAD_REQUEST)

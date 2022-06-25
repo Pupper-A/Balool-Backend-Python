@@ -23,7 +23,7 @@ class Follow(models.Model):
     #     unique_together = ('user_id', 'followed_user_id',)
 
 class Toggle(models.Model):
-    # user_id = models.ForeignKey("User", related_name="toggle")
+    user_id = models.ForeignKey("User", related_name="toggle", on_delete=models.CASCADE, default=1)
     is_toggled = models.BooleanField(null=True)
     toggled_time = models.DateTimeField(auto_now_add=True, blank=True)
 

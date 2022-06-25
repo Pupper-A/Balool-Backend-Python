@@ -6,4 +6,6 @@ urlpatterns = [
     path('users/login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
 
     path("users/signup/", views.SignUp.as_view(), name="sign-up"),
+
+    path("users/toggle/", views.ToggleView.as_view(), name="toggle")
 ]
