@@ -80,9 +80,16 @@ class SignUp(APIView):
 class ToggleView(APIView):
     def get(self, request):
         user = request.user
-        toggle = Toggle.objects.filter(user_id_id=user.id).latest("toggled_time")
-        serializer = ToggleSerializer(toggle, many=False)
-        return Response(serializer.data)
+
+        if Toggle.objects.filter(user_id_id=user.id).exists():
+            toggle = Toggle.objects.filter(user_id_id=user.id).latest("toggled_time")
+
+        
+            serializer = ToggleSerializer(toggle, many=False)
+
+            return Response(serializer.data)
+        else:
+            return Response(None)
 
     @method_decorator(csrf_exempt)
     def post(self, request):
