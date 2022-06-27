@@ -3,6 +3,7 @@ from django.db import models
 import os
 import uuid
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime 
 
 def getcurrentusername(instance, filename):
     ext = filename.split('.')[-1]
@@ -28,5 +29,7 @@ class Toggle(models.Model):
     toggled_time = models.DateTimeField(auto_now_add=True, blank=True)
 
 class Time(models.Model):
-    toggle_status = models.CharField(max_length=30)
-    interval = models.FloatField()
+    user_id = models.ForeignKey("User", related_name="time", on_delete=models.CASCADE, default=1)
+    toggle_status = models.BooleanField()
+    interval = models.IntegerField()
+    date = models.DateTimeField(default=datetime.now)

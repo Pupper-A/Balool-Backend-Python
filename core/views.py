@@ -94,6 +94,9 @@ class ToggleView(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request):
         data = request.data
+        msg = ""
+
+        serializer = ""
 
         try:
             toggle = Toggle.objects.create(
@@ -103,8 +106,38 @@ class ToggleView(APIView):
 
             serializer = ToggleSerializer(toggle, many=False)
             
-            return Response(serializer.data)
-
         except:
             msg = "something goes wrong!"
             return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+
+        if Toggle.objects.filter(user_id_id=data["user_id"]).exists():
+            toggle_ordered_by_date = Toggle.objects.filter(user_id_id=data["user_id"]).order_by('-toggled_time')
+
+            if toggle_ordered_by_date[1]:
+                interval_in_seconds = round((toggle_ordered_by_date[0].toggled_time - toggle_ordered_by_date[1].toggled_time).total_seconds())
+
+                try:
+                    time = Time.objects.create(
+                        user_id_id = data["user_id"],
+                        toggle_status = toggle_ordered_by_date[1].is_toggled,
+                        interval = interval_in_seconds,
+                    )
+
+                    time_serializer = TimeSerializer(time, many=False)
+
+                except:
+                    print("hello")
+                    msg = "something goes wrong!"
+                    return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.data)
+
+class Stats(APIView):
+    def get(self, request):
+        user = request.user
+
+        filtered_time = Time.objects.filter(user_id_id=user.id).all()
+
+        serializer = TimeSerializer(filtered_time, many=True)
+
+        return Response(serializer.data)
