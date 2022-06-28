@@ -1,3 +1,4 @@
+from tracemalloc import start
 from django.shortcuts import render
 
 from rest_framework.decorators import api_view
@@ -9,12 +10,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.db.models import Q
+
 from django.contrib.auth.hashers import make_password
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .serializers import UserSerializer, FollowSerializer, ToggleSerializer, TimeSerializer, UserSerializerWithToken
+from .serializers import UserSerializer, FollowSerializer, ToggleSerializer, TimeSerializer, UserSerializerWithToken, SimpleUserSerializer
 from .models import User, Follow, Toggle, Time
 from core import serializers
 
@@ -141,3 +144,37 @@ class Stats(APIView):
         serializer = TimeSerializer(filtered_time, many=True)
 
         return Response(serializer.data)
+
+class People(APIView):
+    def post(self, request):
+        data = request.data
+
+        users = ""
+
+        start_with = data["startWith"]
+
+        if start_with == "":
+            return Response([])
+
+        else:
+        
+            if " " in start_with:
+                start_with = start_with.split(" ")
+
+                q1 = Q(first_name__startswith = start_with[0])
+                q2 = Q(last_name__startswith = start_with[1])
+
+                users = User.objects.filter(q1 & q2)
+
+            else:
+                q1 = Q(first_name__startswith = start_with)
+                q2 = Q(username__startswith = start_with)
+                q3 = Q(last_name__startswith = start_with)
+
+                users = User.objects.filter(q1 | q2 | q3)
+
+
+            serializer = SimpleUserSerializer(users, many=True)
+
+            return Response(serializer.data)
+        
