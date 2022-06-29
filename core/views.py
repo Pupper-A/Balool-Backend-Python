@@ -46,6 +46,7 @@ class GetUserProfile(APIView):
         first_name = data["firstName"]
         last_name = data["lastName"]
         password = data["password"]
+        is_private = data["is_private"]
 
         user = ""
 
@@ -74,6 +75,9 @@ class GetUserProfile(APIView):
                 pass
             elif make_password(password) != user.password:
                 user.password = make_password(password)
+
+           
+            user.is_private = is_private
 
             user.save()
 
@@ -127,7 +131,6 @@ class ToggleView(APIView):
         if Toggle.objects.filter(user_id_id=user.id).exists():
             toggle = Toggle.objects.filter(user_id_id=user.id).latest("toggled_time")
 
-        
             serializer = ToggleSerializer(toggle, many=False)
 
             return Response(serializer.data)
@@ -192,6 +195,7 @@ class People(APIView):
         data = request.data
 
         users = ""
+        id = request.user.id
 
         start_with = data["startWith"]
 
@@ -221,12 +225,13 @@ class People(APIView):
                 if Toggle.objects.filter(user_id_id = user.id):
                     toggle = Toggle.objects.filter(user_id_id = user.id).latest("toggled_time")
 
-                mood = toggle.is_toggled
+                    mood = toggle.is_toggled
 
                 serializer = SimpleUserSerializer(user, many=False)
-                if(user.is_private == 0):
+
+                if(user.is_private == 1):
                     mood = "private"
-                    user_list.append([serializer.data, mood])
+                user_list.append([serializer.data, mood])
 
             return Response(user_list)
         

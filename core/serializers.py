@@ -5,18 +5,18 @@ from .models import User, Follow, Toggle, Time
 class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "username", "avatar"]
+        fields = ["id", "first_name", "last_name", "username", "avatar", "is_private"]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "username", "email", "is_staff", "avatar"]
+        fields = ["id", "first_name", "last_name", "username", "email", "is_staff", "avatar", "is_private"]
 
 class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "username", "email", "is_staff", "avatar", "token"]
+        fields = ["id", "first_name", "last_name", "username", "email", "is_staff", "avatar", "token", "is_private"]
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
