@@ -13,6 +13,7 @@ def getcurrentusername(instance, filename):
 class User(AbstractUser):
     avatar = models.ImageField(upload_to=getcurrentusername, null=True)
     email = models.CharField(max_length=150, blank=False, unique=True)
+    is_private = models.BooleanField(default=0)
 
 class Follow(models.Model):
     # user_id = models.ForeignKey("User", related_name="following")

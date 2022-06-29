@@ -37,14 +37,54 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 class GetUserProfile(APIView):
-    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        data = request.data
 
-    def get(self, request):
-        user = request.user
+        id = data["id"]
+        username = data["username"]
+        avatar = data["avatar"]
+        first_name = data["firstName"]
+        last_name = data["lastName"]
+        password = data["password"]
 
-        serializer = UserSerializer(user, many=False)
+        user = ""
+
+        if id:
+            user = User.objects.get(id = id)
+
+            if not username:
+                pass
+            elif username != user.username:
+                user.username = username
+
+            if avatar:    
+                user.avatar = avatar
+
+            if not first_name:
+                pass
+            elif first_name != user.first_name:
+                user.first_name = first_name
+
+            if not last_name:
+                pass
+            elif last_name != user.last_name:
+                user.last_name = last_name
+
+            if not password:
+                pass
+            elif make_password(password) != user.password:
+                user.password = make_password(password)
+
+            user.save()
+
+        user = User.objects.get(id = id)
+
+        serializer = UserSerializerWithToken(user, many=False)
+
         return Response(serializer.data)
 
+
+            
 
 class SignUp(APIView):
     @method_decorator(csrf_exempt)
@@ -115,8 +155,8 @@ class ToggleView(APIView):
 
         if Toggle.objects.filter(user_id_id=data["user_id"]).exists():
             toggle_ordered_by_date = Toggle.objects.filter(user_id_id=data["user_id"]).order_by('-toggled_time')
-
-            if toggle_ordered_by_date[1]:
+            
+            if len(toggle_ordered_by_date) > 1:
                 interval_in_seconds = round((toggle_ordered_by_date[0].toggled_time - toggle_ordered_by_date[1].toggled_time).total_seconds())
 
                 try:
@@ -147,6 +187,8 @@ class Stats(APIView):
 
 class People(APIView):
     def post(self, request):
+        user_list = []
+
         data = request.data
 
         users = ""
@@ -174,7 +216,17 @@ class People(APIView):
                 users = User.objects.filter(q1 | q2 | q3)
 
 
-            serializer = SimpleUserSerializer(users, many=True)
+            for user in users:
+                mood = ""
+                if Toggle.objects.filter(user_id_id = user.id):
+                    toggle = Toggle.objects.filter(user_id_id = user.id).latest("toggled_time")
 
-            return Response(serializer.data)
+                mood = toggle.is_toggled
+
+                serializer = SimpleUserSerializer(user, many=False)
+                if(user.is_private == 0):
+                    mood = "private"
+                    user_list.append([serializer.data, mood])
+
+            return Response(user_list)
         
