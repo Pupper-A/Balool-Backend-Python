@@ -230,7 +230,7 @@ class People(APIView):
                 serializer = SimpleUserSerializer(user, many=False)
 
                 if(user.is_private == 1):
-                    mood = "private"
+                    mood = "Private"
                 user_list.append([serializer.data, mood])
 
             return Response(user_list)
