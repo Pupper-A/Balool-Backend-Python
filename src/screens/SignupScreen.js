@@ -27,7 +27,6 @@ function SignupScreen(location) {
     const {error, loading, userInfo} = userRegister
 
     useEffect(() => {
-        console.log(error)
         if(userInfo){
             history(redirect)
         }
@@ -59,7 +58,6 @@ function SignupScreen(location) {
     <FormContainer>
         <h1>Sign Up</h1>
         {message && <Alert variant='danger'>{message}</Alert>}
-        {console.log(error)}
         {error && <Alert variant='danger'>{error}</Alert>}
         {loading && <Loader />}
         <Form onSubmit={submitHandler} className="my-4">

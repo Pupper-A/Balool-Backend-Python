@@ -35,7 +35,7 @@ DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 SECRET_KEY = '!9av0ewr9_k*o2+h10@i&*k0(@&x(4*0(6jo*hd7-+by9*$nc2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -140,6 +140,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '/media'),
     os.path.join(BASE_DIR, 'build/static')
 ]
 
@@ -206,9 +207,12 @@ CORS_ALLOW_ALL_ORIGINS = True
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'socialtoggle/media')
 MEDIA_URL = '/media/'
 
-import django_heroku
 django_heroku.settings(locals())
 
 
 options = DATABASES['default'].get('OPTIONS', {})
 options.pop('sslmode', None)
+
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
