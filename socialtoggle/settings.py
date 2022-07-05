@@ -35,7 +35,7 @@ DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 SECRET_KEY = '!9av0ewr9_k*o2+h10@i&*k0(@&x(4*0(6jo*hd7-+by9*$nc2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -140,7 +140,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, '/media'),
     os.path.join(BASE_DIR, 'build/static')
 ]
 
