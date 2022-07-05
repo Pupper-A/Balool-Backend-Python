@@ -12,6 +12,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.views import View
+from django.http import HttpResponse, HttpResponseNotFound
+
+import os
+
 from django.db.models import Q
 
 from django.contrib.auth.hashers import make_password
@@ -304,3 +309,14 @@ class FollowView(APIView):
             except:
                 msg = "something goes wrong!"
                 return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+
+class Assets(View):
+
+    def get(self, _request, filename):
+        path = os.path.join(os.path.dirname(__file__), 'static', filename)
+
+        if os.path.isfile(path):
+            with open(path, 'rb') as file:
+                return HttpResponse(file.read(), content_type='application/javascript')
+        else:
+            return HttpResponseNotFound()
