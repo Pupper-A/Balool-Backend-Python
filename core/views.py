@@ -95,11 +95,7 @@ class GetUserProfile(APIView):
 
         return Response(serializer.data)
 
-
-            
-
 class SignUp(APIView):
-    @method_decorator(csrf_exempt)
     def post(self, request):
         data = request.data
         
