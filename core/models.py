@@ -16,13 +16,10 @@ class User(AbstractUser):
     is_private = models.BooleanField(default=0)
 
 class Follow(models.Model):
-    # user_id = models.ForeignKey("User", related_name="following")
-    # followed_user_id = models.ForeignKey("User", related_name="followers")
+    user = models.ForeignKey("User", related_name="following", on_delete=models.CASCADE, default=1)
+    followed_user = models.ForeignKey("User", related_name="followers", on_delete=models.CASCADE, default=1)
     status = models.CharField(max_length=30, default="")
-    created_date = models.DateTimeField(auto_now_add=True, blank=True)
-
-    # class Meta:
-    #     unique_together = ('user_id', 'followed_user_id',)
+    created_date = models.DateTimeField(default=datetime.now)
 
 class Toggle(models.Model):
     user_id = models.ForeignKey("User", related_name="toggle", on_delete=models.CASCADE, default=1)

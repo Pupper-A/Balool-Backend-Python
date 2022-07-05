@@ -4,4 +4,6 @@ db.sqlite3
 /socialtoggle/__pycache__
 /core/__pycache__
 
-/media
+/media.env
+
+/node_modules

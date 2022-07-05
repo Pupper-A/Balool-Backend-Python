@@ -9,5 +9,7 @@ urlpatterns = [
 
     path("users/toggle/", views.ToggleView.as_view(), name="toggle"),
     path("users/time/", views.Stats.as_view(), name="time"),
-    path("users/people/", views.People.as_view(), name="people")
+    path("users/people/", views.People.as_view(), name="people"),
+
+    path("users/follow/", views.FollowView.as_view(), name="follow")
 ]

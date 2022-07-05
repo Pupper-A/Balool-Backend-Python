@@ -1,6 +1,8 @@
 from tracemalloc import start
 from django.shortcuts import render
 
+from datetime import datetime 
+
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.views import APIView
@@ -18,7 +20,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from .serializers import UserSerializer, FollowSerializer, ToggleSerializer, TimeSerializer, UserSerializerWithToken, SimpleUserSerializer
-from .models import User, Follow, Toggle, Time
+from .models import User, Toggle, Time
+from .models import Follow
 from core import serializers
 
 
@@ -172,7 +175,6 @@ class ToggleView(APIView):
                     time_serializer = TimeSerializer(time, many=False)
 
                 except:
-                    print("hello")
                     msg = "something goes wrong!"
                     return Response(msg, status=status.HTTP_400_BAD_REQUEST)
         
@@ -235,3 +237,70 @@ class People(APIView):
 
             return Response(user_list)
         
+class FollowView(APIView):
+    def get(self, request):
+        user = request.user
+
+        if Follow.objects.filter(user = user).exists():
+            user_followers = ""
+
+            user_followings = Follow.objects.filter(user = user).all()
+
+
+            if Follow.objects.filter(followed_user = user).exists():
+                user_followers = Follow.objects.filter(followed_user = user).exists()
+
+            following_serializer = FollowSerializer(user_followings, many=True)
+            follower_serializer = FollowSerializer(user_followers, many=True)
+
+            return Response([following_serializer.data, follower_serializer.data])
+
+        else:
+            msg = "No Following Data!"
+            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def post(self, request):
+        data = request.data
+
+        followed_by = data["followed_by"]
+        followed = data["followed"]
+        action = data["action"]
+
+        user = User.objects.get(id = followed_by)
+        followed_user = User.objects.get(id = followed)
+
+
+        stat = ""
+
+        if followed_user.is_private:
+            stat = "pending"
+        else:
+            stat = "accepted"
+
+        if action == "Follow":
+            try:
+                new_follow= Follow.objects.create(
+                user= user,
+                followed_user = followed_user,
+                status = stat,
+                )
+
+                follow_serializer = FollowSerializer(new_follow, many=False)
+
+                return Response(follow_serializer.data)
+            
+            except:
+                msg = "something goes wrong!"
+                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            try:
+                instance = Follow.objects.filter(user = followed_by).get(followed_user = followed)
+                instance.delete()
+                msg = "Unfollowed!"
+                return Response(msg)
+
+            except:
+                msg = "something goes wrong!"
+                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
