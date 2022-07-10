@@ -76,11 +76,9 @@ function ProfileScreen() {
             setColor("danger")
         }else{
             dispatch(profile(id, username, first_name, last_name, avatar, password, isPrivate))
-
             setMessage("Your Profile info changed successfuly.")
             setColor("success")
         }
-        
     }
 
     const handleImageChange = (e) => {

@@ -66,7 +66,9 @@ class GetUserProfile(APIView):
             elif username != user.username:
                 user.username = username
 
-            if avatar:    
+            if not avatar:
+                pass
+            elif avatar:    
                 user.avatar = avatar
 
             if not first_name:
@@ -84,13 +86,16 @@ class GetUserProfile(APIView):
             elif make_password(password) != user.password:
                 user.password = make_password(password)
 
-           
-            user.is_private = is_private
+            if is_private:
+                user.is_private = is_private
+
+            print(f"is private: {is_private}")
 
             user.save()
 
         user = User.objects.get(id = id)
 
+        print(user.first_name)
         serializer = UserSerializerWithToken(user, many=False)
 
         return Response(serializer.data)
