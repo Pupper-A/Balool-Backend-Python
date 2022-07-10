@@ -11,6 +11,9 @@ import NewUserScreen from './screens/NewUserScreen';
 import StatsScreen from './screens/StatsScreen';
 import FindPeople from './screens/FindPeople';
 import ProfileScreen from './screens/ProfileScreen';
+import { useEffect } from 'react';
+
+import icon from './toggle-on-solid.png';
 
 import axios from 'axios';
 
@@ -18,6 +21,10 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 function App() {
+  useEffect(() => {
+      const favicon = document.getElementById('favicon');
+      favicon.setAttribute('href', icon);
+  }, []);
   return (
     <Router>
         <Header />
