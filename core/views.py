@@ -89,13 +89,10 @@ class GetUserProfile(APIView):
             if is_private:
                 user.is_private = is_private
 
-            print(f"is private: {is_private}")
-
             user.save()
 
         user = User.objects.get(id = id)
 
-        print(user.first_name)
         serializer = UserSerializerWithToken(user, many=False)
 
         return Response(serializer.data)
@@ -136,7 +133,6 @@ class SignUp(APIView):
 class ToggleView(APIView):
     def get(self, request):
         user = request.user
-
         if Toggle.objects.filter(user_id_id=user.id).exists():
             toggle = Toggle.objects.filter(user_id_id=user.id).latest("toggled_time")
 
